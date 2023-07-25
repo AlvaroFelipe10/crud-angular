@@ -1,5 +1,5 @@
-import { FormGroup, UntypedFormArray, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Injectable } from '@angular/core';
+import { UntypedFormArray, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -8,21 +8,20 @@ export class FormUtilsService {
 
   constructor() { }
 
-  ValidateAllFormFields(FormGroup: UntypedFormGroup | UntypedFormArray){
-    Object.keys(FormGroup.controls).forEach(field => {
-      const control = FormGroup.get(field);
-      if(control instanceof UntypedFormControl){
-        control.markAsTouched({onlySelf: true});
-      } else if (control instanceof UntypedFormGroup || control instanceof UntypedFormArray){
-        control.markAsTouched({onlySelf: true});
-        this.ValidateAllFormFields(control);
+  validateAllFormFields(formGroup: UntypedFormGroup | UntypedFormArray) {
+    Object.keys(formGroup.controls).forEach(field => {
+      const control = formGroup.get(field);
+      if (control instanceof UntypedFormControl) {
+        control.markAsTouched({ onlySelf: true });
+      } else if (control instanceof UntypedFormGroup || control instanceof UntypedFormArray) {
+        control.markAsTouched({ onlySelf: true });
+        this.validateAllFormFields(control);
       }
     });
   }
 
-
-  getErrorMessage(FormGroup: UntypedFormGroup,  fieldName: string) {
-    const field = FormGroup.get(fieldName) as UntypedFormControl ;
+  getErrorMessage(formGroup: UntypedFormGroup, fieldName: string) {
+    const field = formGroup.get(fieldName) as UntypedFormControl;
     return this.getErrorMessageFromField(field);
   }
 
@@ -30,30 +29,29 @@ export class FormUtilsService {
     if (field?.hasError('required')) {
       return 'Campo obrigatório';
     }
-    if (field?.hasError('minLength')) {
-      const requiredLength = field.errors
-        ? field.errors['minLength']['requiredLength']
-        : 5;
+
+    if (field?.hasError('minlength')) {
+      const requiredLength: number = field.errors ? field.errors['minlength']['requiredLength'] : 5;
       return `Tamanho mínimo precisa ser de ${requiredLength} caracteres.`;
     }
-    if (field?.hasError('maxLength')) {
-      const requiredLength = field.errors
-        ? field.errors['maxLength']['requiredLength']
-        : 200;
+
+    if (field?.hasError('maxlength')) {
+      const requiredLength: number = field.errors ? field.errors['maxlength']['requiredLength'] : 200;
       return `Tamanho máximo excedido de ${requiredLength} caracteres.`;
     }
-    return 'Campo inválido';
+
+    return 'Campo Inválido';
   }
 
-  getFormArrayFieldErrorMessage(FormGroup: UntypedFormGroup, formArrayName: string ,
-     fieldName: string, index: number){
-    const formArray = FormGroup.get('formArrayName') as UntypedFormArray;
+  getFormArrayFieldErrorMessage(formGroup: UntypedFormGroup, formArrayName: string,
+    fieldName: string, index: number) {
+    const formArray = formGroup.get(formArrayName) as UntypedFormArray;
     const field = formArray.controls[index].get(fieldName) as UntypedFormControl;
     return this.getErrorMessageFromField(field);
   }
 
-  isFormArrayRequired(FormGroup: UntypedFormGroup, formArrayName: string){
-    const lessons = FormGroup.get(formArrayName) as UntypedFormArray;
-    return !lessons.valid && lessons.hasError('required') && lessons.touched;
+  isFormArrayRequired(formGroup: UntypedFormGroup, formArrayName: string) {
+    const formArray = formGroup.get(formArrayName) as UntypedFormArray;
+    return !formArray.valid && formArray.hasError('required') && formArray.touched;
   }
 }

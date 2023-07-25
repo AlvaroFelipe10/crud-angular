@@ -17,7 +17,6 @@ import { FormUtilsService } from 'src/app/shared/form/form-utils.service';
 export class CourseFormComponent implements OnInit {
   form!: FormGroup;
 
-
   constructor(
     private formBuilder: NonNullableFormBuilder,
     private service: CoursesService,
@@ -92,7 +91,7 @@ export class CourseFormComponent implements OnInit {
       (result) => this.onSuccess(),
       (error) => this.onError());
     } else {
-      this.formUtils.ValidateAllFormFields(this.form)
+      this.formUtils.validateAllFormFields(this.form)
 
     }
   }
